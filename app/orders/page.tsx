@@ -33,7 +33,30 @@ export default function OrdersPage() {
   });
 
   useEffect(() => {
-    fetchData();
+    let mounted = true;
+    async function loadData() {
+      try {
+        const custSnap = await getDocs(collection(db, 'customers'));
+        const custData = custSnap.docs.map(doc => ({ id: doc.id, name: doc.data().name }));
+        
+        const q = query(collection(db, 'orders'), orderBy('createdAt', 'desc'));
+        const snap = await getDocs(q);
+        const data = snap.docs.map(doc => {
+          const order = { id: doc.id, ...doc.data() } as Order;
+          order.customerName = custData.find(c => c.id === order.customerId)?.name || 'Khách hàng ẩn danh';
+          return order;
+        });
+
+        if (mounted) {
+          setCustomers(custData);
+          setOrders(data);
+        }
+      } catch (error) {
+        console.error("Error fetching data", error);
+      }
+    }
+    loadData();
+    return () => { mounted = false; };
   }, []);
 
   async function fetchData() {

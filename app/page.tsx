@@ -14,7 +14,8 @@ export default function DashboardPage() {
   });
 
   useEffect(() => {
-    async function fetchStats() {
+    let mounted = true;
+    async function loadStats() {
       try {
         const customersSnap = await getDocs(collection(db, 'customers'));
         const ordersSnap = await getDocs(collection(db, 'orders'));
@@ -25,17 +26,20 @@ export default function DashboardPage() {
           revenue += doc.data().amount || 0;
         });
 
-        setStats({
-          customers: customersSnap.size,
-          orders: ordersSnap.size,
-          revenue,
-          conversations: convSnap.size
-        });
+        if (mounted) {
+          setStats({
+            customers: customersSnap.size,
+            orders: ordersSnap.size,
+            revenue,
+            conversations: convSnap.size
+          });
+        }
       } catch (error) {
         console.error("Error fetching stats", error);
       }
     }
-    fetchStats();
+    loadStats();
+    return () => { mounted = false; };
   }, []);
 
   return (

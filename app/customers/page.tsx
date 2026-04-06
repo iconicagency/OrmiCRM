@@ -25,7 +25,21 @@ export default function CustomersPage() {
   });
 
   useEffect(() => {
-    fetchCustomers();
+    let mounted = true;
+    async function loadCustomers() {
+      try {
+        const q = query(collection(db, 'customers'), orderBy('createdAt', 'desc'));
+        const snap = await getDocs(q);
+        const data = snap.docs.map(doc => ({ id: doc.id, ...doc.data() } as Customer));
+        if (mounted) {
+          setCustomers(data);
+        }
+      } catch (error) {
+        console.error("Error fetching customers", error);
+      }
+    }
+    loadCustomers();
+    return () => { mounted = false; };
   }, []);
 
   async function fetchCustomers() {

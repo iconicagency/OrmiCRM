@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { collection, getDocs, addDoc, serverTimestamp, query, orderBy, onSnapshot, where } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
-import { Send, User } from 'lucide-react';
+import { Send, User, MessageCircle } from 'lucide-react';
 import { format } from 'date-fns';
 
 interface Conversation {

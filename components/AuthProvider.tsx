@@ -40,7 +40,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       await signInWithPopup(auth, googleProvider);
     } catch (error: any) {
       console.error("Error signing in with Google", error);
-      setErrorMsg(error.message || "Đã xảy ra lỗi khi đăng nhập. Vui lòng thử mở ứng dụng trong tab mới.");
+      if (error.code === 'auth/unauthorized-domain') {
+        setErrorMsg(`Tên miền này chưa được cấp phép. Vui lòng vào Firebase Console -> Authentication -> Settings -> Authorized domains và thêm: ${window.location.hostname}`);
+      } else {
+        setErrorMsg(error.message || "Đã xảy ra lỗi khi đăng nhập. Vui lòng thử mở ứng dụng trong tab mới.");
+      }
     }
   };
 

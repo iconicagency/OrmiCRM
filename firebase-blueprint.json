@@ -1,0 +1,97 @@
+{
+  "entities": {
+    "user": {
+      "title": "User",
+      "description": "Admin user of the CMS",
+      "type": "object",
+      "properties": {
+        "email": { "type": "string", "format": "email" },
+        "role": { "type": "string", "enum": ["admin", "staff"] },
+        "name": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["email", "role"]
+    },
+    "customer": {
+      "title": "Customer",
+      "description": "Customer profile",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "address": { "type": "string" },
+        "phone": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "zaloId": { "type": "string" },
+        "messengerId": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "createdAt"]
+    },
+    "order": {
+      "title": "Order",
+      "description": "Order record",
+      "type": "object",
+      "properties": {
+        "customerId": { "type": "string" },
+        "purchaseDate": { "type": "string", "format": "date-time" },
+        "product": { "type": "string" },
+        "warrantyPeriod": { "type": "string", "description": "Warranty period in months or descriptive string" },
+        "status": { "type": "string", "enum": ["pending", "processing", "completed", "cancelled"] },
+        "amount": { "type": "number" },
+        "source": { "type": "string", "enum": ["manual", "wordpress"] },
+        "wpOrderId": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["customerId", "product", "status", "amount", "source", "createdAt"]
+    },
+    "conversation": {
+      "title": "Conversation",
+      "description": "Chat thread with a customer",
+      "type": "object",
+      "properties": {
+        "customerId": { "type": "string" },
+        "platform": { "type": "string", "enum": ["zalo", "messenger"] },
+        "lastMessage": { "type": "string" },
+        "updatedAt": { "type": "string", "format": "date-time" },
+        "unreadCount": { "type": "number" }
+      },
+      "required": ["customerId", "platform", "updatedAt"]
+    },
+    "message": {
+      "title": "Message",
+      "description": "Individual chat message",
+      "type": "object",
+      "properties": {
+        "conversationId": { "type": "string" },
+        "sender": { "type": "string", "enum": ["customer", "agent"] },
+        "content": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "required": ["conversationId", "sender", "content", "timestamp"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/user" },
+      "description": "Admin users"
+    },
+    "/customers/{customerId}": {
+      "schema": { "$ref": "#/entities/customer" },
+      "description": "Customer profiles"
+    },
+    "/orders/{orderId}": {
+      "schema": { "$ref": "#/entities/order" },
+      "description": "Orders"
+    },
+    "/conversations/{conversationId}": {
+      "schema": { "$ref": "#/entities/conversation" },
+      "description": "Chat threads"
+    },
+    "/messages/{messageId}": {
+      "schema": { "$ref": "#/entities/message" },
+      "description": "Chat messages"
+    }
+  }
+}

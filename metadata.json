@@ -1,0 +1,5 @@
+{
+  "name": "OmniChannel CRM",
+  "description": "A CMS to manage customer data, sync WordPress orders, and handle Zalo/Messenger chats.",
+  "requestFramePermissions": []
+}

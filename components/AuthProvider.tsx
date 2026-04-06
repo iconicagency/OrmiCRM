@@ -24,6 +24,7 @@ export const useAuth = () => useContext(AuthContext);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -35,9 +36,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signIn = async () => {
     try {
+      setErrorMsg(null);
       await signInWithPopup(auth, googleProvider);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error signing in with Google", error);
+      setErrorMsg(error.message || "Đã xảy ra lỗi khi đăng nhập. Vui lòng thử mở ứng dụng trong tab mới.");
     }
   };
 
@@ -72,6 +75,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             <h1 className="text-3xl font-bold tracking-tight text-slate-900">Omni<span className="text-indigo-600">CRM</span></h1>
             <p className="text-base text-slate-500">Đăng nhập để quản lý khách hàng của bạn</p>
           </div>
+          
+          {errorMsg && (
+            <div className="bg-red-50 text-red-600 p-4 rounded-xl text-sm border border-red-100">
+              <p className="font-semibold mb-1">Lỗi đăng nhập:</p>
+              <p>{errorMsg}</p>
+              <p className="mt-2 text-xs">
+                * Mẹo: Nếu bạn đang xem ứng dụng trong khung xem trước, hãy thử <strong>mở ứng dụng trong tab mới</strong> (nút mũi tên ở góc trên bên phải) để đăng nhập.
+              </p>
+            </div>
+          )}
+
           <button
             onClick={signIn}
             className="group relative inline-flex items-center justify-center rounded-xl text-sm font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 disabled:pointer-events-none disabled:opacity-50 bg-slate-900 text-white hover:bg-slate-800 h-12 px-8 py-3 shadow-lg hover:shadow-xl hover:-translate-y-0.5"
